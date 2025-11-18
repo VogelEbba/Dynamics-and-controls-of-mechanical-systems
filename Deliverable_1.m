@@ -74,7 +74,17 @@ angle_d_spd = [0;
 M_d_spd = [0 
            0
            s_pd_dot * d_phi]; %Deze d_phi can ook naar d_spd worden verandert. 
+%Moment for dw
+angle_dw = [0                 %Deze is nog onduidelijk 
+            0
+            theta];
+M_dw = [0
+        0
+        -dW*theta_dot];
 
 
 % Where is dw applied exactly? 
-Q_nc = transpose(jacobian(r_FA,q))*FA_vec + transpose(jacobian(angle,q))*M_vec;
+Q_nc = transpose(jacobian(r_FA,q))*FA_vec + transpose(jacobian(r_dx,q))*F_dx ...
+        + transpose(jacobian(angle_d_theta,q))*M_d_theta...
+        + transpose(jacobian(angle_d_spd,q))*M_d_spd...
+        + transpose(jacobian(angle_dw,q))*M_dw;
