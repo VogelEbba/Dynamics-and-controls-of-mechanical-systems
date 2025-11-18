@@ -49,19 +49,32 @@ V = V_load + V_jib + V_hoist_block + V_crane_beam;
 
 %% Generalized non-conservative force
 %Force part
+%Force FA
 r_FA= [x * cos(s_pd);
       L0 + sin(s_pd)];
 FA_vec = [cos(s_pd)*FA;
           sin(s_pd)*FA];
-r_FW = r3;
-FW_vec = [cos(theta)*FW;
-          sin(theta)*FW];
+%Force dx 
+r_dx = r2;
+F_dx = [cos(s_pd)*x_dot*dx;
+        sin(s_pd)*x_dot*dx];
+
 %Moment part 
-angle = [0;  %Used angle instead of theta because theta is already used as a generalized coordinate. 
+%Moment d theta
+angle_d_theta = [0;  %Used angle instead of theta because theta is already used as a generalized coordinate. 
          0;
          theta]; 
-M_vec = [0
+M_d_theta= [0
         0
-        -x_dot* d_theta];
+        theta_dot* d_theta];
+%moment voor d phi 
+angle_d_spd = [0;   
+               0;
+               s_pd]; 
+M_d_spd = [0 
+           0
+           s_pd_dot * d_phi]; %Deze d_phi can ook naar d_spd worden verandert. 
+
+
 % Where is dw applied exactly? 
 Q_nc = transpose(jacobian(r_FA,q))*FA_vec + transpose(jacobian(angle,q))*M_vec;
