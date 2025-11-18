@@ -15,7 +15,7 @@ q_ddot = [x_ddot;
 
 %% Position vectors 
 r2 = [x*cos(s_pd);
-      L0 + sin(s_pd)];
+      L0 + x*sin(s_pd)];
 r3 = [x*cos(s_pd) - cos(theta)*L2;
       L0 + x*sin(s_pd) - sin(theta)*L2] ;
 r4 = [L1*cos(s_pd);
@@ -51,13 +51,13 @@ V = V_load + V_jib + V_hoist_block + V_crane_beam;
 %Force part
 %Force FA
 r_FA= [x * cos(s_pd);
-      L0 + sin(s_pd)];
+      L0 + x * sin(s_pd)];
 FA_vec = [cos(s_pd)*FA;
           sin(s_pd)*FA];
 %Force dx 
 r_dx = r2;
-F_dx = [cos(s_pd)*x_dot*dx;
-        sin(s_pd)*x_dot*dx];
+F_dx = [-cos(s_pd)*x_dot*dx;
+        -sin(s_pd)*x_dot*dx];
 
 %Moment part 
 %Moment d theta
@@ -66,16 +66,16 @@ angle_d_theta = [0;  %Used angle instead of theta because theta is already used 
          theta]; 
 M_d_theta= [0
         0
-        theta_dot* d_theta];
+        -theta_dot* d_theta];
 %moment voor d phi 
 angle_d_spd = [0;   
                0;
                s_pd]; 
 M_d_spd = [0 
            0
-           s_pd_dot * d_phi]; %Deze d_phi can ook naar d_spd worden verandert. 
+           -s_pd_dot * d_phi]; %Deze d_phi can ook naar d_spd worden verandert. 
 %Moment for dw
-angle_dw = [0                 %Deze is nog onduidelijk 
+angle_dw = [0                 %Deze is nog onduidelijk of hij klopt
             0
             theta];
 M_dw = [0
@@ -83,8 +83,28 @@ M_dw = [0
         -dW*theta_dot];
 
 
-% Where is dw applied exactly? 
-Q_nc = transpose(jacobian(r_FA,q))*FA_vec + transpose(jacobian(r_dx,q))*F_dx ...
-        + transpose(jacobian(angle_d_theta,q))*M_d_theta...
-        + transpose(jacobian(angle_d_spd,q))*M_d_spd...
-        + transpose(jacobian(angle_dw,q))*M_dw;
+Q_nc = transpose(jacobian(r_FA,q))*FA_vec + transpose(jacobian(r_dx,q))*F_dx ...;
+        + transpose(jacobian(angle_d_theta,q))*M_d_theta...;
+        + transpose(jacobian(angle_d_spd,q))*M_d_spd...;
+        + transpose(jacobian(angle_dw,q))*M_dw
+
+%% Lagrange Equations of Motion
+% d/dt(T,qdot) 
+dTdq_dot = jacobian(T,q_dot);
+First_Term = jacobian(transpose(dTdq_dot),q)*q_dot + jacobian(transpose(dTdq_dot),q_dot)*q_ddot;
+First_Term = transpose(First_Term); 
+
+% T,q
+Second_Term = jacobian(T,q);
+Second_Term = simplify(Second_Term);
+
+% V,q
+Third_Term = jacobian(V,q);
+Third_Term = simplify(Third_Term);
+
+% Equation of Motion
+EoM = First_Term - Second_Term + Third_Term - transpose(Q_nc) == 0;
+EoM = simplify(EoM);
+EoM = transpose(EoM);
+
+
