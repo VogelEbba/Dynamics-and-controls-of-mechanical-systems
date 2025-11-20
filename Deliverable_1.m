@@ -3,7 +3,7 @@ syms theta theta_dot theta_ddot
 syms x x_dot x_ddot
 syms s_pd s_pd_dot s_pd_ddot
 syms L0 L1 L2 m0 m1 m2 m3 
-syms g dx dW d_phi d_theta k_theta kx x0 theta0 FA FW
+syms g dx dW d_phi d_theta k_theta kx x0 theta0 q0 FA FW
 
 %% Generalized coordinates 
 q = [x;
@@ -45,7 +45,7 @@ V_load = m3 * g * (L0 + x * sin(s_pd) - L2 * sin(theta)) + (1/2) * k_theta * (th
 V_jib = m1 * g * (1/2) * L1 * sin(s_pd + L0);
 V_hoist_block = m2 * g * (x * sin(s_pd) + L0) + (1/2) * kx * (x - x0)^2;
 V_crane_beam = m0 * g * (1/2) * L0;
-V = V_load + V_jib + V_hoist_block + V_crane_beam;
+V = V_load + V_jib + V_hoist_block + V_crane_beam
 
 %% Generalized non-conservative force
 %Force part
@@ -86,7 +86,7 @@ M_dw = [0
 Q_nc = transpose(jacobian(r_FA,q))*FA_vec + transpose(jacobian(r_dx,q))*F_dx ...;
         + transpose(jacobian(angle_d_theta,q))*M_d_theta...;
         + transpose(jacobian(angle_d_spd,q))*M_d_spd...;
-        + transpose(jacobian(angle_dw,q))*M_dw
+        + transpose(jacobian(angle_dw,q))*M_dw;
 
 %% Lagrange Equations of Motion
 % d/dt(T,qdot) 
@@ -103,8 +103,11 @@ Third_Term = jacobian(V,q);
 Third_Term = simplify(Third_Term);
 
 % Equation of Motion
-EoM = First_Term - Second_Term + Third_Term - transpose(Q_nc) == 0;
+EoM = First_Term - Second_Term + Third_Term - transpose(Q_nc);
 EoM = simplify(EoM);
 EoM = transpose(EoM);
+EoM == 0;
+
+
 
 
