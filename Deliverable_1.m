@@ -45,7 +45,7 @@ V_load = m3 * g * (L0 + x * sin(s_pd) - L2 * sin(theta)) + (1/2) * k_theta * (th
 V_jib = m1 * g * (1/2) * L1 * sin(s_pd + L0);
 V_hoist_block = m2 * g * (x * sin(s_pd) + L0) + (1/2) * kx * (x - x0)^2;
 V_crane_beam = m0 * g * (1/2) * L0;
-V = V_load + V_jib + V_hoist_block + V_crane_beam
+V = V_load + V_jib + V_hoist_block + V_crane_beam;
 
 %% Generalized non-conservative force
 %Force part
@@ -109,5 +109,17 @@ EoM = transpose(EoM);
 EoM == 0;
 
 
+%out = sim("Simulink_deliverable_1.slx");
+
+figure(1)
+plot(out.tout, out.q(:,1),'k');
+grid on
+xlabel('Time [s]');
+ylabel('X [m]');
 
 
+figure(2)
+plot(out.tout, out.q(:,2),'k');
+grid on
+xlabel('Time [s]');
+ylabel('Theta [rad]');
