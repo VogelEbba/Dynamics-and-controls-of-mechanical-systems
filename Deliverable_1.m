@@ -110,16 +110,52 @@ EoM == 0;
 
 
 %out = sim("Simulink_deliverable_1.slx");
+% 
+% figure(1)
+% plot(out.tout, out.q(:,1),'k');
+% grid on
+% xlabel('Time [s]');
+% ylabel('X [m]');
 
-figure(1)
-plot(out.tout, out.q(:,1),'k');
+% 
+% figure(2)
+% plot(out.tout, out.q(:,2),'k');
+% grid on
+% xlabel('Time [s]');
+% ylabel('Theta [rad]');
+
+
+% Run Simulink model
+simOut = sim('Simulink_deliverable_1');
+
+% Time vector
+t = simOut.tout;          % [0 110] s
+
+% States q = [x; theta], stored as 1x2xN
+q_raw = simOut.q;                 % 1x2x110001
+q_mat = squeeze(q_raw).';         % -> 110001x2
+
+x     = q_mat(:,1);               % x(t): hoist block position
+theta = q_mat(:,2);               % θ(t): absolute chain angle
+
+%% Plot 1: x(t)
+figure
+plot(t, x)
 grid on
-xlabel('Time [s]');
-ylabel('X [m]');
+xlim([0 110])
+ylim([11.15 12.26])
+xlabel('Time t [s]')
+ylabel('Hoist position x(t) [m]')
+title('Time trajectory of the hoist block position x(t)')
+legend('x(t)')
 
-
-figure(2)
-plot(out.tout, out.q(:,2),'k');
+%% Plot 2: θ(t)
+figure
+plot(t, theta)
 grid on
-xlabel('Time [s]');
-ylabel('Theta [rad]');
+xlim([0 110])
+ylim([0.95 2.05])
+xlabel('Time t [s]')
+ylabel('\theta(t) [rad]')
+title('Time trajectory of the absolute chain angle \theta(t)')
+legend('\theta(t)')
