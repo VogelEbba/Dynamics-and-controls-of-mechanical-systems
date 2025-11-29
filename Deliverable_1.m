@@ -164,6 +164,27 @@ eig_val2 = eig(dVdq2_2);
 isposdef = all(eig_val1 > 0) % if =1 then stable.
 isposdef = all(eig_val2 > 0) % if =1 then stable.
 
+%% Linearization
+M_0 = hessian(T,q_dot);
+M_0 = subs(M_0,q,q_02); %sub in q = q_0
+M_0 = subs(M_0,q_dot,[0;0]) % sub in q_dot = 0
+
+D_0 = jacobian(-Q_nc,q_dot);
+D_0 = subs(D_0,q,q_02);
+D_0 = subs(D_0,q_dot,[0;0])
+
+K_0 = hessian(V,q);
+K_0 = subs(K_0,q,q_02);
+K_0 = subs(K_0,q_dot,[0;0])
+
+K_0_Q = jacobian(-Q_nc,q);
+K_0_Q = subs(K_0_Q,q,q_02);
+K_0_Q = subs(K_0_Q,q_dot,[0;0])
+
+Q = subs(Q_nc,q,q_02);
+Q = subs(Q,q_dot,[0;0])
+
+EoM_linearized = M_0*q_ddot + D_0*q_dot + (K_0+K_0_Q)*(q-q_02) == Q
 
 
 
