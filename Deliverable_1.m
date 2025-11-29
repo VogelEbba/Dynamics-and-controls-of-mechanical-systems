@@ -2,8 +2,19 @@ clc; clear all; close all;
 syms theta theta_dot theta_ddot 
 syms x x_dot x_ddot
 syms phi phi_dot phi_ddot
-syms L0 L1 L2 m0 m1 m2 m3 
-syms g dx dW d_phi d_theta k_theta kx x0 theta0 q0 FA FW theta_ref Lx
+syms L0 L1 m0 m1 
+syms d_phi d_theta x0 theta0 q0 FA FW theta_ref Lx
+%syms g L2 m2 m3 dW dx kx k_theta
+
+%% Parameter values
+g = 9.81;
+L2 = 10;
+m2 = 2000;
+m3 = 500;
+dW = 2000;
+dx = 200;
+kx = 7000;
+k_theta = 200;
 
 %% Generalized coordinates 
 q = [x;
@@ -131,24 +142,49 @@ q_mat = squeeze(q_raw).';         % -> 110001x2
 x     = q_mat(:,1);               % x(t): hoist block position
 theta = q_mat(:,2);               % θ(t): absolute chain angle
 
+
+%% Equilibrium points 
+dVdq = transpose(jacobian(V,q));
+dVdq = simplify(dVdq);
+q_01 = [12.5; -1.577];
+q_02 = [12.5; 1.564];
+q_01 = double(q_01);
+q_02 = double(q_02);
+
+%% Finding stability
+% Find hessian and sub in equilibrium point
+dVdq2 = hessian(V,q);
+dVdq2 = simplify(dVdq2);
+dVdq2_1 = subs(dVdq2,q,q_01); % sub in q0
+dVdq2_2 = subs(dVdq2,q,q_02); % sub in q0
+
+% Determine if positive definite
+eig_val1 = eig(dVdq2_1);
+eig_val2 = eig(dVdq2_2);
+isposdef = all(eig_val1 > 0) % if =1 then stable.
+isposdef = all(eig_val2 > 0) % if =1 then stable.
+
+
+
+
 %% Plot 1: x(t)
-figure
-plot(t, x)
-grid on
-xlim([0 110])
-ylim([11.15 12.26])
-xlabel('Time t [s]')
-ylabel('Hoist position x(t) [m]')
-title('Time trajectory of the hoist block position x(t)')
-legend('x(t)')
+%figure
+%plot(t, x)
+%grid on
+%xlim([0 110])
+%ylim([11.15 12.26])
+%xlabel('Time t [s]')
+%ylabel('Hoist position x(t) [m]')
+%title('Time trajectory of the hoist block position x(t)')
+%legend('x(t)')
 
 %% Plot 2: θ(t)
-figure
-plot(t, theta)
-grid on
-xlim([0 110])
-ylim([0.95 2.05])
-xlabel('Time t [s]')
-ylabel('\theta(t) [rad]')
-title('Time trajectory of the absolute chain angle \theta(t)')
-legend('\theta(t)')
+%figure
+%plot(t, theta)
+%grid on
+%xlim([0 110])
+%ylim([0.95 2.05])
+%xlabel('Time t [s]')
+%ylabel('\theta(t) [rad]')
+%title('Time trajectory of the absolute chain angle \theta(t)')
+%legend('\theta(t)')
