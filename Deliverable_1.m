@@ -11,7 +11,7 @@ q = [x;
 q_dot = [x_dot;
     theta_dot];
 q_ddot = [x_ddot;
-    theta_ddot];
+    theta_ddotz];
 
 %% Position vectors 
 r2 = [x*cos(s_pd);
