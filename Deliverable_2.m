@@ -3,8 +3,8 @@ syms theta theta_dot theta_ddot
 syms x x_dot x_ddot
 %syms phi phi_dot phi_ddot
 syms L0 L1 m0 m1 
-syms d_phi d_theta x0 theta0 q0 FA FW theta_ref Lx
-%syms g L2 m2 m3 dW dx kx k_theta
+syms d_phi x0 theta0 q0 FW theta_ref Lx
+%syms g L2 m2 m3 dW dx kx k_theta FA d_theta
 
 %% Parameter values
 g = 9.81;
@@ -18,6 +18,8 @@ k_theta = 200;
 phi = 0;
 phi_dot = 0;
 phi_ddot = 0;
+FA = 0;
+d_theta = 10;
 %% Generalized coordinates 
 q = [x;
     theta];
@@ -73,20 +75,6 @@ EoM = transpose(EoM);
 %EoM == 0;
 
 
-% Run Simulink model
-simOut = sim('Simulink_deliverable_1');
-
-% Time vector
-t = simOut.tout;          % [0 110] s
-
-% States q = [x; theta], stored as 1x2xN
-q_raw = simOut.q;                 % 1x2x110001
-q_mat = squeeze(q_raw).';         % -> 110001x2
-
-x     = q_mat(:,1);               % x(t): hoist block position
-theta = q_mat(:,2);               % θ(t): absolute chain angle
-
-
 %% Equilibrium points 
 dVdq = transpose(jacobian(V,q));
 dVdq = simplify(dVdq);
@@ -129,98 +117,4 @@ Q = subs(Q_nc,q,q_02);
 Q = subs(Q,q_dot,[0;0])
 
 EoM_linearized = M_0*q_ddot + D_0*q_dot + (K_0+K_0_Q)*(q-q_02) == Q
-
-%% parameters
-g_val        = 9.81;
-L2_val       = 10;
-m2_val       = 2000;
-m3_val       = 500;
-dx_val       = 200;
-dW_val       = 2000;
-d_theta_val  = 10;
-kx_val       = 7000;
-k_theta_val  = 200;
-Lx_val       = 12.5;
-phi_val      = 0;   % spd(t) = 0
-
-
-M0 = double(subs(M_0, ...
-    {g, L2, m2, m3, dx, dW, d_theta, kx, k_theta, Lx, phi}, ...
-    {g_val, L2_val, m2_val, m3_val, dx_val, dW_val, d_theta_val, ...
-     kx_val, k_theta_val, Lx_val, phi_val}));
-
-D0 = double(subs(D_0, ...
-    {g, L2, m2, m3, dx, dW, d_theta, kx, k_theta, Lx, phi}, ...
-    {g_val, L2_val, m2_val, m3_val, dx_val, dW_val, d_theta_val, kx_val, k_theta_val, Lx_val, phi_val}));
-
-K0 = double(subs(K_0, ...
-    {g, L2, m2, m3, dx, dW, d_theta, kx, k_theta, Lx, phi}, ...
-    {g_val, L2_val, m2_val, m3_val, dx_val, dW_val, d_theta_val, kx_val, k_theta_val, Lx_val, phi_val}));
-
-KQ0 = double(subs(K_0_Q, ...
-    {g, L2, m2, m3, dx, dW, d_theta, kx, k_theta, Lx, phi}, ...
-    {g_val, L2_val, m2_val, m3_val, dx_val, dW_val, d_theta_val, kx_val, k_theta_val, Lx_val, phi_val}));
-
-% Total stiffness matrix
-Ktot = K0 + KQ0;
-
-A = [zeros(2) eye(2);
-     -M0\Ktot   -M0\D0];
-
-
-% initial conditions
-q0      = q_02;              
-q_init  = [11.5; pi/3];      
-q1_0    = q_init - q0;       
-q1dot_0 = [0; 0];            
-
-%state vector
-z0 = [q1_0; q1dot_0];
-
-%ode45
-tspan = [0 110];
-lin_ode = @(t,z) A*z;       
-
-[t_lin, z_lin] = ode45(lin_ode, tspan, z0);
-
-%something weird
-q1_lin    = z_lin(:,1:2);
-x_lin     = q1_lin(:,1) + q0(1);
-theta_lin = q1_lin(:,2) + q0(2);
-
-%% SIMULINK 
-simOut = sim('Simulink_deliverable_1');
-
-t_nl  = simOut.tout;
-q_raw = simOut.q;         
-q_mat = squeeze(q_raw).';  
-
-x_nl     = q_mat(:,1);
-theta_nl = q_mat(:,2);
-
-%% Plot
-
-%Plot x(t) nonlinear vs linearized
-figure
-plot(t_nl, x_nl, 'k', 'LineWidth', 1.2); hold on
-plot(t_lin, x_lin, 'r', 'LineWidth', 1.2);
-grid on
-xlim([0 110]);
-ylim([11.42 13.08]);       
-xlabel('Time t [s]');
-ylabel('Hoist position x(t) [m]');
-title('Nonlinear vs linearized response of x(t)');
-legend('Nonlinear system','Linearized system','Location','best');
-
-%Plot theta(t) nonlinear vs linearized 
-figure
-plot(t_nl, theta_nl, 'k', 'LineWidth', 1.2); hold on
-plot(t_lin, theta_lin, 'r', 'LineWidth', 1.2);
-grid on
-xlim([0 110]);
-ylim([0.95 2.05]);        
-xlabel('Time t [s]');
-ylabel('\theta(t) [rad]');
-title('Nonlinear vs linearized response of \theta(t)');
-legend('Nonlinear system','Linearized system','Location','best');
 
