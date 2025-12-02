@@ -118,7 +118,6 @@ Q = subs(Q,q_dot,[0;0])
 
 EoM_linearized = M_0*q_ddot + D_0*q_dot + (K_0+K_0_Q)*(q-q_02) == Q
 
-<<<<<<< HEAD
 %% parameters
 g_val        = 9.81;
 L2_val       = 10;
@@ -183,26 +182,26 @@ theta_nl = q_mat(:,2);
 
 %% Plot
 
-%Plot x(t) nonlinear vs linearized
+%xt nonlinear vs linearized
 figure
-plot(t_lin, x_lin, 'r', 'LineWidth', 1);
+plot(t_nl, x_nl, 'k', 'LineWidth', 1); hold on      % nonlinear (Simulink)
+plot(t_lin, x_lin, 'r--', 'LineWidth', 1);          % linearized (ODE45)
 grid on
 xlim([0 110]);
 ylim([11.42 13.08]);       
 xlabel('Time t [s]');
-ylabel('Hoist position x(t) (m)');
-title('linearized response of x(t)');
-legend('Linearized system','Location','best');
+ylabel('Hoist position x(t) [m]');
+title('Nonlinear vs linearized response of x(t)');
+legend('Nonlinear system','Linearized system','Location','best');
 
-%Plot theta(t) nonlinear vs linearized 
+%theta t nonlinear vs linearized 
 figure
-plot(t_lin, theta_lin, 'r', 'LineWidth', 1);
+plot(t_nl, theta_nl, 'k', 'LineWidth', 1.2); hold on  % nonlinear (Simulink)
+plot(t_lin, theta_lin, 'r--', 'LineWidth', 1.2);      % linearized (ODE45)
 grid on
 xlim([0 110]);
 ylim([0.95 2.05]);        
-xlabel('Time t (s)');
+xlabel('Time t [s]');
 ylabel('\theta(t) [rad]');
-title('linearized response of \theta(t)');
-legend('Linearized system','Location','best');
-
-%
+title('Nonlinear vs linearized response of \theta(t)');
+legend('Nonlinear system','Linearized system','Location','best');
