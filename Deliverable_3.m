@@ -1,3 +1,4 @@
+clc; clear all; close all;
 %% Parameters 
 m1 = 10000;
 m3 = 500;
@@ -5,12 +6,17 @@ L2 = 10;
 kx = 0;
 k_theta = 200;
 g = 9.81;
+dW = 2000;
+d_theta = 10;
+dx = 200;
 
 %% M_0 and K_0 (From the solutions of deliverable 2)
 M_0 = [m1+m3, -L2*m3*sin(-1.564);
        -L2*m3*sin(-1.564), L2^2*m3];
 K_0 = [kx, 0;
        0, k_theta + L2*g*m3];
+D_0 = [dx, -dW*sin(-1.564);
+       0, d_theta + L2*dW];
 
 %% Eigenmodes and eigenfrequencies
 
@@ -21,4 +27,38 @@ u2 = U(:,2)                    % 2nd eigenmode
 w = sqrt(diag(lambda));       % Solve for eigenfrequencies (rad/s)
 w1 = w(1)                     % 1st eigenfrequency
 w2 = w(2)                     % 2nd eigenfrequency
+
+%% SIMULINK (nonlinear system)
+simOut = sim('Simulink_deliverable_1');
+
+t_nl  = simOut.tout;
+q_raw = simOut.q;         
+q_mat = squeeze(q_raw).';  
+
+x_nl     = q_mat(:,1);
+theta_nl = q_mat(:,2);
+
+%% Plot
+
+%xt nonlinear vs linearized
+figure
+plot(t_nl, x_nl, 'k', 'LineWidth', 1); hold on      % nonlinear (Simulink)
+grid on
+xlim([0 130]);
+ylim([11.5 22.5]);       
+xlabel('Time t [s]');
+ylabel('Hoist position x(t) [m]');
+title('Nonlinear response of x(t)');
+
+
+%theta t nonlinear vs linearized 
+figure
+plot(t_nl, theta_nl, 'k', 'LineWidth', 1.2); hold on  % nonlinear (Simulink)
+grid on
+xlim([0 130]);
+ylim([1.38 1.821]);        
+xlabel('Time t [s]');
+ylabel('\theta(t) [rad]');
+title('Nonlinear response of \theta(t)');
+
  
