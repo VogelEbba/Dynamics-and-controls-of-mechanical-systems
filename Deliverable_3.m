@@ -26,7 +26,6 @@ q_ddot = [x_ddot;
 q_0 = [12.5;
        1.564];
 
-w2 = 1.017;
 %% M_0 and K_0 (From the solutions of deliverable 2)
 M_0 = [m1+m3, -L2*m3*sin(-1.564);
        -L2*m3*sin(-1.564), L2^2*m3];
@@ -38,8 +37,12 @@ D_0 = [dx, -dW*sin(-1.564);
 %% Eigenmodes and eigenfrequencies
 
 [U,lambda] = eig(M_0\K_0);     % Solve for eigenmatrix (U) and eigenvalues matrix (lambda)
-u1 = U(:,1)                    % 1st eigenmode
+u1 = U(:,1);                    % 1st eigenmode
 u2 = U(:,2)                    % 2nd eigenmode
+
+
+u1_norm = u1/u1(1)
+u2_norm = u2/u2(1)
 
 w = sqrt(diag(lambda));       % Solve for eigenfrequencies (rad/s)
 w1 = w(1)                     % 1st eigenfrequency
@@ -94,4 +97,5 @@ D = [0;0];
 
 sys = ss(A,Bss,C,D);
 G = tf(sys)   % gives G1(s) and G2(s)
-bode(G)
+figure;
+bode(G)  
