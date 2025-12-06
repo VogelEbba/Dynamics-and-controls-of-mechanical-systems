@@ -5,6 +5,7 @@ syms x x_dot x_ddot t
 
 %% Parameters 
 m1 = 10000;
+m2 = 2000;
 m3 = 500;
 L2 = 10;
 kx = 0;
@@ -27,7 +28,7 @@ q_0 = [12.5;
        1.564];
 
 %% M_0 and K_0 (From the solutions of deliverable 2)
-M_0 = [m1+m3, -L2*m3*sin(-1.564);
+M_0 = [m2+m3, -L2*m3*sin(-1.564);
        -L2*m3*sin(-1.564), L2^2*m3];
 K_0 = [kx, 0;
        0, k_theta + L2*g*m3];
@@ -41,12 +42,12 @@ u1 = U(:,1);                    % 1st eigenmode
 u2 = U(:,2);                    % 2nd eigenmode
 
 
-u1_norm = u1/u1(1);
-u2_norm = u2/u2(1);
+u1_norm = u1/u1(1)
+u2_norm = u2/u2(1)
 
 w = sqrt(diag(lambda));       % Solve for eigenfrequencies (rad/s)
-w1 = w(1);                     % 1st eigenfrequency
-w2 = w(2);                     % 2nd eigenfrequency
+w1 = w(1)                    % 1st eigenfrequency
+w2 = w(2)                    % 2nd eigenfrequency
 
 %% SIMULINK (nonlinear system)
 % simOut = sim('Simulink_deliverable_1');
@@ -106,9 +107,9 @@ bode(G)
 % Gain2 = dcgain(G(2));
 
 %Option 2 for calculating gain.
-num1 = [0.001, 4.002e-05, 9.85e-05];
-den1 = [1, 0.4202, 1.042, 0.0197];
-num2 = [-1e-05, 3.925e-22];
-den2 = [1, 0.4202, 1.042, 0.0197];
+num1 = [0.0005, 0.002001, 0.0004925];
+den1 = [1, 0.5002, 1.271, 0.0985];
+num2 = [-5e-05, 5.888e-21];
+den2 = [1, 0.5002, 1.271, 0.0985];
 [Z1, P1, Gain1] = tf2zp(num1, den1)
 [Z2, P2, Gain2] = tf2zp(num2, den2)
