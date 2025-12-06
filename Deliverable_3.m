@@ -38,15 +38,15 @@ D_0 = [dx, -dW*sin(-1.564);
 
 [U,lambda] = eig(M_0\K_0);     % Solve for eigenmatrix (U) and eigenvalues matrix (lambda)
 u1 = U(:,1);                    % 1st eigenmode
-u2 = U(:,2)                    % 2nd eigenmode
+u2 = U(:,2);                    % 2nd eigenmode
 
 
-u1_norm = u1/u1(1)
-u2_norm = u2/u2(1)
+u1_norm = u1/u1(1);
+u2_norm = u2/u2(1);
 
 w = sqrt(diag(lambda));       % Solve for eigenfrequencies (rad/s)
-w1 = w(1)                     % 1st eigenfrequency
-w2 = w(2)                     % 2nd eigenfrequency
+w1 = w(1);                     % 1st eigenfrequency
+w2 = w(2);                     % 2nd eigenfrequency
 
 %% SIMULINK (nonlinear system)
 % simOut = sim('Simulink_deliverable_1');
@@ -99,3 +99,7 @@ sys = ss(A,Bss,C,D);
 G = tf(sys)   % gives G1(s) and G2(s)
 figure;
 bode(G)  
+
+%% Gain of the transferfunctions
+Gain1 = dcgain(G(1))
+Gain2 = dcgain(G(2))
