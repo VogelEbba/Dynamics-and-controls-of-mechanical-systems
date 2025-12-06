@@ -101,5 +101,14 @@ figure;
 bode(G)  
 
 %% Gain of the transferfunctions
-Gain1 = dcgain(G(1))
-Gain2 = dcgain(G(2))
+% Option 1 for calculating gain.
+% Gain1 = dcgain(G(1));
+% Gain2 = dcgain(G(2));
+
+%Option 2 for calculating gain.
+num1 = [0.001, 4.002e-05, 9.85e-05];
+den1 = [1, 0.4202, 1.042, 0.0197];
+num2 = [-1e-05, 3.925e-22];
+den2 = [1, 0.4202, 1.042, 0.0197];
+[Z1, P1, Gain1] = tf2zp(num1, den1)
+[Z2, P2, Gain2] = tf2zp(num2, den2)
