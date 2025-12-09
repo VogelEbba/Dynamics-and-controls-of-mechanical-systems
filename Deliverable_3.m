@@ -113,3 +113,10 @@ num2 = [-5e-05, 5.888e-21];
 den2 = [1, 0.5002, 1.271, 0.0985];
 [Z1, P1, Gain1] = tf2zp(num1, den1)
 [Z2, P2, Gain2] = tf2zp(num2, den2)
+
+%% Question f
+
+Gl = G(1) + L2* G(2);
+
+figure(1);
+bode (Gl)
