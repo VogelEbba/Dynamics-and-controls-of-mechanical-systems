@@ -17,3 +17,6 @@ figure;
 plot(tOut, y);
 grid on
 xlim([0 91]);
+xlabel('time [s]');
+ylabel('Amplitude');
+
