@@ -1,7 +1,7 @@
 clc; clear all; close all;
 
 syms theta theta_dot theta_ddot 
-syms x x_dot x_ddot t
+syms x x_dot x_ddot t s
 
 %% Parameters 
 m1 = 10000;
@@ -42,12 +42,12 @@ u1 = U(:,1);                    % 1st eigenmode
 u2 = U(:,2);                    % 2nd eigenmode
 
 
-u1_norm = u1/u1(1)
-u2_norm = u2/u2(1)
+u1_norm = u1/u1(1);
+u2_norm = u2/u2(1);
 
 w = sqrt(diag(lambda));       % Solve for eigenfrequencies (rad/s)
-w1 = w(1)                    % 1st eigenfrequency
-w2 = w(2)                    % 2nd eigenfrequency
+w1 = w(1);                    % 1st eigenfrequency
+w2 = w(2);                   % 2nd eigenfrequency
 
 %% SIMULINK (nonlinear system)
 % simOut = sim('Simulink_deliverable_1');
@@ -95,28 +95,27 @@ C = [1 0 0 0;
      0 1 0 0];
 
 D = [0;0];
+I = eye(4)
 
 sys = ss(A,Bss,C,D);
-G = tf(sys)   % gives G1(s) and G2(s)
+G = tf(sys) % gives G1(s) and G2(s)
+G1 = G(1);
+G2 = G(2);
 figure;
 bode(G)  
 
 %% Gain of the transferfunctions
-% Option 1 for calculating gain.
-% Gain1 = dcgain(G(1));
-% Gain2 = dcgain(G(2));
+[mag, phase] = bode(G1, w2);
+[mag,~] = bode(G1, w2);
+gain1_option3 = mag(:)
 
-%Option 2 for calculating gain.
-num1 = [0.0005, 0.002001, 0.0004925];
-den1 = [1, 0.5002, 1.271, 0.0985];
-num2 = [-5e-05, 5.888e-21];
-den2 = [1, 0.5002, 1.271, 0.0985];
-[Z1, P1, Gain1] = tf2zp(num1, den1)
-[Z2, P2, Gain2] = tf2zp(num2, den2)
+[mag, phase] = bode(G2, w2);
+[mag,~] = bode(G2, w2);
+gain2_option3 = mag(:)
 
 %% Question f
 
-Gl = G(1) + L2* G(2);
+Gl = G1 + (L2 * G2);
 
 figure(1);
 bode (Gl)
