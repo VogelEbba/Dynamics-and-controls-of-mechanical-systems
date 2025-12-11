@@ -1,10 +1,10 @@
 clear all
 clc
-delete all
+close all
 
 %% Computing the poles of the transfer function
-Gl = tf([5.1e-3 1000 250 ],[5e5 2.5e5 6.4e5 4.9e4 0]);
-H = tf([5.1e-3 1000 250 0 ],[5e5 2.5e5 6.4e5 4.9e4 0]);
+Gl = tf([5.1e-3 100 250 ],[5e5 2.5e5 6.4e5 4.9e4 0]); 
+H = tf([5.1e-3 100 250 0 ],[5e5 2.5e5 6.4e5 4.9e4 0]);
 
 
 Hmin = minreal(H);      % this cancels common factors
@@ -51,3 +51,73 @@ grid on
 xlim([0 240]);
 xlabel('time [s]');
 ylabel('Amplitude');
+
+%% poles and zeros of the closed-loop transfer functions
+figure;
+pzmap(T1); 
+hold on;
+
+pzmap(T2);
+hold on;
+
+pzmap(T3);
+grid on;
+
+xlim([-0.24 -5.5e-3]);
+ylim([-1.2 1.2]);
+title('Pole and zeros of closed-loop transfer functions');
+legend('P1','P2','P3','Location','best');
+
+% Zoomed in verion of ths plot
+figure;
+pzmap(T1); 
+hold on;
+
+pzmap(T2);
+hold on;
+
+pzmap(T3);
+grid on;
+
+xlim([-0.05 -0.031]);
+ylim([-0.74 0.74]);
+title('Zoomed in version');
+legend('P1','P2','P3','Location','best');
+
+%% Step response of the closed-loop system from r to y
+C_PD = tf([390 360], 1);
+T_PD = feedback(C_PD*Gl,1);
+
+t_pd = 0:0.01:79;
+
+[y_pd, t_pd_out] =step(T_PD,t_pd);     
+[y_P2, t_P2] =step(T2,t_pd);    
+
+figure;
+plot(t_P2, y_P2); 
+hold on;
+
+plot(t_pd_out, y_pd);
+grid on;
+
+xlim([0 79]);
+xlabel('time (s)');
+ylabel('amplitude');
+title('Step response comparison');
+legend('P2 = 400','C(s) = 390s + 360','Location','best');
+
+%% location of poles and zeros for both cases
+figure;
+pzmap(T2); 
+hold on;
+
+pzmap(T_PD);
+grid on;
+
+xlim([-0.22 -0.025]);
+ylim([-1.2 1.2]);
+title('location poles and zeros');
+legend('P2 = 400','PD controller','Location','best');
+
+poles_P2  = pole(T2);
+poles_PD  = pole(T_PD);
