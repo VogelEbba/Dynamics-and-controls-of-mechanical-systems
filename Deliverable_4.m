@@ -1,14 +1,14 @@
 clear all
 clc
 delete all
-syms s
+
 %% Computing the poles of the transfer function
 Gl = tf([5.1e-3 1000 250 ],[5e5 2.5e5 6.4e5 4.9e4 0]);
 H = tf([5.1e-3 1000 250 0 ],[5e5 2.5e5 6.4e5 4.9e4 0]);
 
 
 Hmin = minreal(H);      % this cancels common factors
-poles_Hmin = pole(Hmin)
+poles_Hmin = pole(Hmin);
 
 %% Generating impuls response function
 t = 0:0.01:91; 
@@ -20,3 +20,34 @@ xlim([0 91]);
 xlabel('time [s]');
 ylabel('Amplitude');
 
+%% Stability of the closed loop transfer function 
+P1 = 80;
+P2 = 400;
+P3 = 700;
+
+
+T1 = tf([P1*5.1e-3 P1*100 P1*250],[5e5 2.5e5 (6.4e5+P1*5.1e-3) (4.9e4 + P1* 100) P1*250]);
+T2 = tf([P2*5.1e-3 P2*100 P2*250],[5e5 2.5e5 (6.4e5+P2*5.1e-3) (4.9e4 + P2* 100) P2*250]);
+T3 = tf([P3*5.1e-3 P3*100 P3*250],[5e5 2.5e5 (6.4e5+P3*5.1e-3) (4.9e4 + P3* 100) P3*250]);
+poles_T = pole(T1);
+Tmin = minreal(T1);
+poles_Tmin = pole(Tmin);
+
+%% Step response function 
+t2 = 0 : 0.01 : 500;
+[Amplitude_step1, tOut_step1] = step(T1,t2);
+[Amplitude_step2, tOut_step2] = step(T2,t2);
+[Amplitude_step3, tOut_step3] = step(T3,t2);
+
+figure;
+plot(tOut_step1, Amplitude_step1);
+hold on 
+plot(tOut_step2, Amplitude_step2);
+hold on 
+plot(tOut_step3, Amplitude_step3);
+legend("P1", "P2","P3")
+title("Step response of T(s)")
+grid on
+xlim([0 240]);
+xlabel('time [s]');
+ylabel('Amplitude');
