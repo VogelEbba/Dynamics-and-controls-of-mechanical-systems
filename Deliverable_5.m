@@ -39,3 +39,7 @@ S3 = 1/(1 + L3);
 [Gm_L1, Pm_L1, Wcg_L1, Wcp_L1] = margin(L1);
 [Gm_L2, Pm_L2, Wcg_L2, Wcp_L2] = margin(L2);
 [Gm_L3, Pm_L3, Wcg_L3, Wcp_L3] = margin(L3);
+
+MM1 = 1 / norm(S1, inf);
+MM2 = 1 / norm(S2, inf);
+MM3 = 1 / norm(S3, inf);
