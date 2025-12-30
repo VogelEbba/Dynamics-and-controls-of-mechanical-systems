@@ -11,7 +11,7 @@ L1 = C1 * G;
 L2 = C2 * G;
 L3 = C3 * G;
 
-figure;
+figure(1);
 nyquist(L1);
 hold on 
 nyquist(L2);
@@ -40,6 +40,39 @@ S3 = 1/(1 + L3);
 [Gm_L2, Pm_L2, Wcg_L2, Wcp_L2] = margin(L2);
 [Gm_L3, Pm_L3, Wcg_L3, Wcp_L3] = margin(L3);
 
-MM1 = 1 / norm(S1, inf);
+MM1 = 1 / norm(S1, inf); %Twijfels of dit goed is 
 MM2 = 1 / norm(S2, inf);
 MM3 = 1 / norm(S3, inf);
+
+% Andere manier: Geeft hetzelfde antwoord
+w = linspace(0,1000,1e6);
+[modulusmargin1,index1] = min(abs(freqresp(1 + L1,w)));
+[modulusmargin2,index2] = min(abs(freqresp(1 + L2,w)));
+[modulusmargin3,index3] = min(abs(freqresp(1 + L3,w)));
+wc1 = w(index1);
+wc2 = w(index2);
+wc3 = w(index3);
+%% d step response
+t = 0 : 0.01 : 150;
+[Amplitude_step1, tOut_step1] = step(T1 ,t);
+[Amplitude_step2, tOut_step2] = step(T2 ,t);
+[Amplitude_step3, tOut_step3] = step(T3,t);
+
+figure(2);
+plot(tOut_step1, Amplitude_step1);
+hold on 
+plot(tOut_step2, Amplitude_step2);
+hold on 
+plot(tOut_step3, Amplitude_step3);
+legend("C1", "C2","C3")
+title("Step response of T(s)")
+grid on
+xlim([0 100]);
+xlabel('time [s]');
+ylabel('Amplitude');
+
+%info1 = stepinfo(T1, 'SettlingTimeThreshold', 0.01);
+info2 = stepinfo(T2, 'SettlingTimeThreshold', 0.01);
+info3 = stepinfo(T3, 'SettlingTimeThreshold', 0.01);
+
+
