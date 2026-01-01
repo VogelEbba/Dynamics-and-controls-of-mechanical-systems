@@ -44,7 +44,7 @@ MM1 = 1 / norm(S1, inf); %Twijfels of dit goed is
 MM2 = 1 / norm(S2, inf);
 MM3 = 1 / norm(S3, inf);
 
-% Andere manier: Geeft hetzelfde antwoord
+% Andere manier, geeft hetzelfde antwoord
 w = linspace(0,1000,1e6);
 [modulusmargin1,index1] = min(abs(freqresp(1 + L1,w)));
 [modulusmargin2,index2] = min(abs(freqresp(1 + L2,w)));
@@ -52,7 +52,7 @@ w = linspace(0,1000,1e6);
 wc1 = w(index1);
 wc2 = w(index2);
 wc3 = w(index3);
-%% d step response
+%% d step response 
 t = 0 : 0.01 : 150;
 [Amplitude_step1, tOut_step1] = step(T1 ,t);
 [Amplitude_step2, tOut_step2] = step(T2 ,t);
