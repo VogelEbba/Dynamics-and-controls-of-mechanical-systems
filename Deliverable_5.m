@@ -71,7 +71,7 @@ xlim([0 100]);
 xlabel('time [s]');
 ylabel('Amplitude');
 
-%info1 = stepinfo(T1, 'SettlingTimeThreshold', 0.01);
+info1 = stepinfo(T1, 'SettlingTimeThreshold', 0.01);
 info2 = stepinfo(T2, 'SettlingTimeThreshold', 0.01);
 info3 = stepinfo(T3, 'SettlingTimeThreshold', 0.01);
 
