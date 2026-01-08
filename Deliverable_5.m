@@ -33,20 +33,21 @@ L2_poles = pole(L2);
 L3_poles = pole(L3);
 
 %% c
+figure(7);
+margin(L1);
+title('Margin L1');
+
 S1 = 1/(1 + L1);
 S2 = 1/(1 + L2);
 S3 = 1/(1 + L3);
-
-
-
 
 [Gm_L1, Pm_L1, Wcg_L1, Wcp_L1] = margin(L1);
 [Gm_L2, Pm_L2, Wcg_L2, Wcp_L2] = margin(L2);
 [Gm_L3, Pm_L3, Wcg_L3, Wcp_L3] = margin(L3);
 
-MM1 = 1 / norm(S1, inf); %Twijfels of dit goed is
-MM2 = 1 / norm(S2, inf);
-MM3 = 1 / norm(S3, inf);
+MM1_1 = norm(S1, inf); %Twijfels of dit goed is
+MM2_1 = norm(S2, inf);
+MM3_1 = norm(S3, inf);
 
 % Andere manier: Geeft hetzelfde antwoord
 w = linspace(0,1000,1e6);
@@ -56,6 +57,8 @@ w = linspace(0,1000,1e6);
 wc1 = w(index1);
 wc2 = w(index2);
 wc3 = w(index3);
+
+
 
 %% d step response
 t = 0 : 0.01 : 150;
@@ -75,9 +78,12 @@ xlim([0 100]);
 xlabel('time [s]');
 ylabel('Amplitude');
 
-%info1 = stepinfo(T1, 'SettlingTimeThreshold', 0.01);
-info2 = stepinfo(T2, 'SettlingTimeThreshold', 0.01);
-info3 = stepinfo(T3, 'SettlingTimeThreshold', 0.01);
+%info1 = stepinfo(T1, 'SettlingTimeThreshold', 0.001);
+info2 = stepinfo(T2, 'SettlingTimeThreshold', 0.001);
+info3 = stepinfo(T3, 'SettlingTimeThreshold', 0.001);
+
+% T3s = step(T3, 10000);
+% SSE2 = 1-T3s(end)
 
 %% f
 G_damaged = tf([5.1e-3 10 250],[5e5 7e4 6.2e5 4.9e4 0]);
@@ -119,16 +125,6 @@ fprintf('--- Settling time damaged ---\n');
 fprintf('C1: %.2f s, C2: %.2f s, C3: %.2f s\n', info1_d.SettlingTime, info2_d.SettlingTime, info3_d.SettlingTime);
 
 %% h
-S1 = 1/(1 + L1);
-S2 = 1/(1 + L2);
-S3 = 1/(1 + L3);
-
-%modulus margin
-MM1 = 1 / norm(S1, inf);
-MM2 = 1 / norm(S2, inf);
-MM3 = 1 / norm(S3, inf);
-
-fprintf('Modulus margins: MM1=%.4f, MM2=%.4f, MM3=%.4f\n', MM1, MM2, MM3);
 
 figure;
 bodemag(S1, S2, S3);
@@ -138,14 +134,15 @@ legend('S1','S2','S3','Location','best');
 
 %% i
 figure;
-bodemag(T1, T2, T3);
+%bodemag(T1, T2, T3);
+bodemag(L1, L2, L3);
 grid on
 title('Complementary sensitivity magnitude');
 legend('T1','T2','T3','Location','best');
 
 %% j
 figure;
-bodemag(S2, T2);
+bode(S2, T2);
 grid on
 title('Bode of S2(s) and T2(s)');
 legend('S2','T2','Location','best');
